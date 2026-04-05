@@ -1,236 +1,31 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-:root {
-  --bg-dark: #0a0e17;
-  --bg-gradient: linear-gradient(135deg, #0f172a 0%, #020617 100%);
-  --glass-bg: rgba(255, 255, 255, 0.05);
-  --glass-border: rgba(255, 255, 255, 0.1);
-  --glass-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-  --accent: #3b82f6;
-  --accent-hover: #2563eb;
-  --text-main: #f8fafc;
-  --text-muted: #94a3b8;
-  --success: #10b981;
-  --error: #ef4444;
+@layer base {
+  body {
+    @apply bg-gradient-to-br from-slate-900 to-slate-950 text-slate-50 min-h-screen font-sans m-0 p-0 box-border;
+  }
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+@layer utilities {
+  .glass-panel {
+    @apply bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl shadow-[0_4px_30px_rgba(0,0,0,0.1)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_40px_rgba(0,0,0,0.2)];
+  }
 
-body {
-  font-family: 'Inter', sans-serif;
-  background: var(--bg-gradient);
-  color: var(--text-main);
-  min-height: 100vh;
-}
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold text-base cursor-pointer transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none w-full md:w-auto;
+  }
 
-#root {
-  width: 100%;
-}
+  .btn-primary {
+    @apply bg-blue-500 text-white shadow-[0_4px_14px_rgba(59,130,246,0.4)] hover:bg-blue-600 hover:-translate-y-0.5 hover:shadow-[0_6px_20px_rgba(59,130,246,0.6)];
+  }
 
-.app-container {
-  max-width: 900px;
-  margin: 3rem auto;
-  padding: 0 2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-}
+  .btn-outline {
+    @apply bg-transparent text-slate-50 border border-white/10 hover:bg-white/5;
+  }
 
-/* Glassmorphism utility */
-.glass-panel {
-  background: var(--glass-bg);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--glass-border);
-  border-radius: 16px;
-  box-shadow: var(--glass-shadow);
-  padding: 2rem;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.glass-panel:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.2);
-}
-
-/* Typography */
-h1 {
-  font-size: 2.5rem;
-  font-weight: 800;
-  letter-spacing: -0.05em;
-  background: linear-gradient(to right, #60a5fa, #c084fc);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  margin-bottom: 0.5rem;
-}
-
-h2 {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin-bottom: 1.5rem;
-}
-
-p {
-  color: var(--text-muted);
-  line-height: 1.6;
-}
-
-/* Buttons */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  border: none;
-  font-weight: 600;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.btn-primary {
-  background: var(--accent);
-  color: white;
-  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);
-}
-
-.btn-primary:hover:not(:disabled) {
-  background: var(--accent-hover);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
-}
-
-.btn-outline {
-  background: transparent;
-  color: var(--text-main);
-  border: 1px solid var(--glass-border);
-}
-
-.btn-outline:hover:not(:disabled) {
-  background: rgba(255,255,255,0.05);
-}
-
-.btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none;
-}
-
-/* Custom File Upload */
-input[type="file"] {
-  display: none;
-}
-
-.file-dropzone {
-  border: 2px dashed var(--glass-border);
-  border-radius: 12px;
-  padding: 3rem 2rem;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  background: rgba(255, 255, 255, 0.02);
-  margin-bottom: 1.5rem;
-}
-
-.file-dropzone:hover, .file-dropzone.has-file {
-  border-color: var(--accent);
-  background: rgba(59, 130, 246, 0.05);
-}
-
-.file-name {
-  font-weight: 600;
-  color: var(--accent);
-  margin-top: 1rem;
-  display: block;
-}
-
-/* Badges & Status */
-.status-badge {
-  display: inline-block;
-  padding: 0.5rem 1rem;
-  border-radius: 999px;
-  font-size: 0.875rem;
-  font-weight: 500;
-  background: rgba(16, 185, 129, 0.1);
-  color: var(--success);
-  border: 1px solid rgba(16, 185, 129, 0.2);
-  margin-top: 1rem;
-  width: 100%;
-  text-align: center;
-}
-
-.status-badge.info {
-  background: rgba(59, 130, 246, 0.1);
-  color: var(--accent);
-  border-color: rgba(59, 130, 246, 0.2);
-}
-
-.status-error {
-  background: rgba(239, 68, 68, 0.1);
-  color: var(--error);
-  border-color: rgba(239, 68, 68, 0.2);
-}
-
-/* History List */
-.history-list {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.history-item {
-  background: rgba(0,0,0,0.2);
-  border: 1px solid var(--glass-border);
-  padding: 1rem 1.5rem;
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.hash-link {
-  color: var(--accent);
-  text-decoration: none;
-  font-family: monospace;
-  word-break: break-all;
-}
-
-.hash-link:hover {
-  text-decoration: underline;
-}
-
-/* Animations */
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
-}
-
-.animate-pulse {
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-/* Full Screen Login layout */
-.login-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-}
-
-.login-card {
-  text-align: center;
-  max-width: 400px;
-  width: 100%;
-}
-
-.login-icon {
-  width: 80px;
-  margin-bottom: 1.5rem;
+  .status-badge {
+    @apply inline-block px-4 py-2 rounded-full text-sm font-medium w-full text-center mt-4;
+  }
 }

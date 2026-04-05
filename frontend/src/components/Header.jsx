@@ -7,17 +7,17 @@ const Header = ({ address, onLogout }) => {
   };
 
   return (
-    <header className="glass-panel" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.5rem 2rem' }}>
+    <header className="glass-panel p-6 flex flex-col md:flex-row justify-between md:items-center gap-4">
       <div>
-        <h1 style={{ fontSize: '1.5rem', marginBottom: 0 }}>Research Data Provenance</h1>
-        <p style={{ fontSize: '0.9rem', marginTop: '0.25rem' }}>Secure, immutable audit trails for your datasets</p>
+        <h1 className="text-2xl font-extrabold text-slate-50 mb-1 tracking-tight">Research Data Provenance</h1>
+        <p className="text-sm text-slate-400">Secure, immutable audit trails for your datasets</p>
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'rgba(0,0,0,0.2)', padding: '0.5rem 1rem', borderRadius: '99px', fontSize: '0.9rem' }}>
-          <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--success)' }}></div>
+      <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 bg-black/20 px-4 py-2 rounded-full text-sm">
+          <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
           {formatAddress(address)}
         </div>
-        <button onClick={onLogout} className="btn btn-outline" style={{ padding: '0.5rem 1rem', fontSize: '0.9rem' }}>
+        <button onClick={onLogout} className="btn btn-outline !py-2 !px-4 text-sm !w-auto">
           Disconnect
         </button>
       </div>

@@ -4,30 +4,34 @@ const HistorySection = ({ history }) => {
   if (!history || history.length === 0) return null;
 
   return (
-    <div className="glass-panel">
-      <h2>Recent Session Provenance</h2>
-      <ul className="history-list">
+    <div className="glass-panel p-6 md:p-8">
+      <h2 className="text-xl font-semibold mb-6">Global Blockchain History</h2>
+      <ul className="flex flex-col gap-4">
         {history.map((item, idx) => (
-          <li key={idx} className="history-item">
-            <div>
-              <span style={{color: 'var(--text-muted)', fontSize: '0.85rem'}}>IPFS CID</span>
-              <br/>
+          <li key={idx} className="bg-black/20 border border-white/10 p-4 md:p-6 rounded-lg flex flex-col gap-2">
+            <div className="flex flex-col gap-1">
+              <span className="text-slate-400 text-sm">Dataset ID #{item.id}</span>
+              <span className="font-mono text-sm md:text-base text-blue-400 break-all">
+                {item.ipfsHash}
+              </span>
+            </div>
+            <div className="flex flex-col gap-1 mt-2">
+              <span className="text-slate-400 text-sm">Secured By Researcher</span>
+              <span className="font-mono text-sm break-all">{item.researcher}</span>
+            </div>
+            
+            <div className="flex flex-col md:flex-row md:justify-between md:items-center mt-4 pt-4 border-t border-white/5 gap-4">
+              <div className="text-slate-400 text-xs md:text-sm">
+                {new Date(item.timestamp).toLocaleString()}
+              </div>
               <a 
                 href={`https://gateway.pinata.cloud/ipfs/${item.ipfsHash}`} 
                 target="_blank" 
                 rel="noreferrer"
-                className="hash-link"
+                className="btn btn-outline !py-2 !px-4 text-xs md:text-sm text-center"
               >
-                {item.ipfsHash}
+                Download Original File
               </a>
-            </div>
-            <div>
-              <span style={{color: 'var(--text-muted)', fontSize: '0.85rem'}}>Transaction Hash</span>
-              <br/>
-              <span style={{fontFamily: 'monospace', fontSize:'0.9rem'}}>{item.txHash}</span>
-            </div>
-            <div style={{color: 'var(--text-muted)', fontSize: '0.8rem', marginTop: '0.5rem', textAlign: 'right'}}>
-              {new Date(item.timestamp).toLocaleString()}
             </div>
           </li>
         ))}

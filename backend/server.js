@@ -7,6 +7,8 @@ const multer = require('multer');
 const axios = require('axios');
 const FormData = require('form-data');
 const { Readable } = require('stream');
+const https = require('https');
+const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT;
@@ -100,6 +102,11 @@ app.use((err, req, res, next) => {
     res.status(500).json({ error: 'Internal Server Error' });
 });
 
-app.listen(PORT, () => {
-    console.log(`Backend server running securely on port ${PORT}`);
+const sslOptions = {
+    key: fs.readFileSync(process.env.SSL_KEY_PATH),
+    cert: fs.readFileSync(process.env.SSL_CERT_PATH)
+};
+
+https.createServer(sslOptions, app).listen(PORT, () => {
+    console.log(`Backend HTTPS server running securely on port ${PORT}`);
 });
