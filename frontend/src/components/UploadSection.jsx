@@ -1,10 +1,11 @@
 import React, { useRef, useState } from 'react';
 import { getContract } from '../utils/web3';
 
-const UploadSection = ({ signer, onUploadSuccess, globalHistory }) => {
+const UploadSection = ({ signer, onUploadSuccess, onVerifySuccess, globalHistory }) => {
   const [selectedFile, setSelectedFile] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const [status, setStatus] = useState({ type: '', message: '' });
+  const [isDragOver, setIsDragOver] = useState(false);
   const fileInputRef = useRef(null);
 
   const handleFileChange = (e) => {
@@ -17,6 +18,25 @@ const UploadSection = ({ signer, onUploadSuccess, globalHistory }) => {
   const handleDropzoneClick = () => {
     if (!isUploading) {
       fileInputRef.current.click();
+    }
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    setIsDragOver(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    if (!isUploading && e.dataTransfer.files && e.dataTransfer.files[0]) {
+      setSelectedFile(e.dataTransfer.files[0]);
+      setStatus({ type: '', message: '' });
     }
   };
 
@@ -47,10 +67,12 @@ const UploadSection = ({ signer, onUploadSuccess, globalHistory }) => {
 
       if (found) {
          setStatus({ type: 'success', message: `Verified! Exact match found. This is Dataset #${found.id} secured by ${found.researcher.substring(0, 6)}...` });
+         onVerifySuccess(found.id);
       } else {
          setStatus({ type: 'error', message: `Verification Failed! This exact file hash (${ipfsHash}) does not exist on the blockchain.` });
       }
       setSelectedFile(null);
+      if (fileInputRef.current) fileInputRef.current.value = null;
     } catch (error) {
        console.error(error);
        setStatus({ type: 'error', message: error.message || 'An unexpected error occurred.' });
@@ -91,7 +113,17 @@ const UploadSection = ({ signer, onUploadSuccess, globalHistory }) => {
 
       const receipt = await tx.wait();
 
-      setStatus({ type: 'success', message: `Provenance verified! Secured in block ${receipt.blockNumber}.` });
+      setStatus({ 
+        type: 'success', 
+        message: (
+          <span>
+            Provenance verified! Secured in block {receipt.blockNumber}..{' '}
+            <a href={`https://sepolia.etherscan.io/tx/${tx.hash}`} target="_blank" rel="noreferrer" className="underline font-bold hover:opacity-80">
+              View on Etherscan
+            </a>
+          </span>
+        )
+      });
       
       onUploadSuccess({
         ipfsHash,
@@ -100,6 +132,7 @@ const UploadSection = ({ signer, onUploadSuccess, globalHistory }) => {
       });
 
       setSelectedFile(null);
+      if (fileInputRef.current) fileInputRef.current.value = null;
     } catch (error) {
       console.error(error);
       if (error.code === 'ACTION_REJECTED') {
@@ -117,8 +150,13 @@ const UploadSection = ({ signer, onUploadSuccess, globalHistory }) => {
       <h2 className="text-xl font-semibold mb-6">Secure a New Dataset</h2>
       
       <div 
-        className={`border-2 border-dashed rounded-xl p-8 md:p-12 text-center cursor-pointer transition-all duration-200 mb-6 flex flex-col items-center justify-center ${selectedFile ? 'border-blue-500 bg-blue-500/5' : 'border-white/10 hover:border-blue-500 hover:bg-blue-500/5 bg-white/5'}`}
+        className={`border-2 border-dashed rounded-xl p-8 md:p-12 text-center cursor-pointer transition-all duration-200 mb-6 flex flex-col items-center justify-center ${
+          isDragOver || selectedFile ? 'border-blue-500 bg-blue-500/5' : 'border-white/10 hover:border-blue-500 hover:bg-blue-500/5 bg-white/5'
+        }`}
         onClick={handleDropzoneClick}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
       >
         <input 
           className="hidden"

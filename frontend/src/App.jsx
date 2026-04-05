@@ -11,6 +11,7 @@ function App() {
   const [connectedWallet, setConnectedWallet] = useState(null);
   const [signer, setSigner] = useState(null);
   const [globalHistory, setGlobalHistory] = useState([]);
+  const [highlightedId, setHighlightedId] = useState(null);
 
   useEffect(() => {
     if (signer) {
@@ -45,6 +46,11 @@ function App() {
 
   const handleUploadSuccess = () => {
     fetchGlobalHistory();
+    setHighlightedId(null);
+  };
+
+  const handleVerifySuccess = (id) => {
+    setHighlightedId(id);
   };
 
   if (!connectedWallet) {
@@ -54,8 +60,13 @@ function App() {
   return (
     <div className="max-w-[900px] mx-auto my-6 md:my-12 px-4 md:px-8 flex flex-col gap-8 w-full">
       <Header address={connectedWallet} onLogout={handleLogout} />
-      <UploadSection signer={signer} onUploadSuccess={handleUploadSuccess} globalHistory={globalHistory} />
-      <HistorySection history={globalHistory} />
+      <UploadSection 
+        signer={signer} 
+        onUploadSuccess={handleUploadSuccess} 
+        onVerifySuccess={handleVerifySuccess}
+        globalHistory={globalHistory} 
+      />
+      <HistorySection history={globalHistory} highlightedId={highlightedId} />
     </div>
   );
 }
