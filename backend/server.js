@@ -63,6 +63,13 @@ app.post('/api/upload', upload.single('dataset'), async (req, res, next) => {
         });
         data.append('pinataMetadata', metadata);
 
+        if (process.env.GROUP_ID) {
+            const options = JSON.stringify({
+                groupId: process.env.GROUP_ID
+            });
+            data.append('pinataOptions', options);
+        }
+
         // Upload to Pinata
         const response = await axios.post('https://api.pinata.cloud/pinning/pinFileToIPFS', data, {
             maxBodyLength: Infinity,
