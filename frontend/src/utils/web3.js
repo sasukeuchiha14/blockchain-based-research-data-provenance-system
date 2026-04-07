@@ -2,10 +2,10 @@ import { ethers } from 'ethers';
 
 // ABI for the ResearchProvenance contract
 const contractABI = [
-  "function addDataset(string calldata _ipfsHash) external",
-  "function getDataset(uint256 _id) external view returns (string memory ipfsHash, address researcher, uint256 timestamp)",
+  "function addDataset(string calldata _ipfsHash, string calldata _fileName) external",
+  "function getDataset(uint256 _id) external view returns (string memory ipfsHash, address researcher, uint256 timestamp, string memory fileName)",
   "function datasetCount() external view returns (uint256)",
-  "event DatasetAdded(uint256 indexed id, string ipfsHash, address indexed researcher, uint256 timestamp)"
+  "event DatasetAdded(uint256 indexed id, string ipfsHash, address indexed researcher, uint256 timestamp, string fileName)"
 ];
 
 // Address of the deployed contract on Sepolia
