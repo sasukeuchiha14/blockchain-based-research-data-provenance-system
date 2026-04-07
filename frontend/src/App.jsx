@@ -30,7 +30,8 @@ function App() {
           id: i,
           ipfsHash: data[0],
           researcher: data[1],
-          timestamp: Number(data[2]) * 1000
+          timestamp: Number(data[2]) * 1000,
+          fileName: data[3]
         });
       }
       setGlobalHistory(history);

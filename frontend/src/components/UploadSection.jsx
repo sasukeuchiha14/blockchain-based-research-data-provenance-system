@@ -3,6 +3,8 @@ import { getContract } from '../utils/web3';
 
 const UploadSection = ({ signer, onUploadSuccess, onVerifySuccess, globalHistory }) => {
   const [selectedFile, setSelectedFile] = useState(null);
+  const [datasetName, setDatasetName] = useState('');
+  const [mode, setMode] = useState('verify'); // 'verify' or 'upload'
   const [isUploading, setIsUploading] = useState(false);
   const [status, setStatus] = useState({ type: '', message: '' });
   const [isDragOver, setIsDragOver] = useState(false);
@@ -90,6 +92,8 @@ const UploadSection = ({ signer, onUploadSuccess, onVerifySuccess, globalHistory
     try {
       const formData = new FormData();
       formData.append('dataset', selectedFile);
+      const finalName = datasetName.trim() === '' ? selectedFile.name : datasetName.trim();
+      formData.append('datasetName', finalName);
 
       const backendUrl = process.env.REACT_APP_BACKEND_URL;
       const response = await fetch(`${backendUrl}/api/upload`, {
@@ -107,7 +111,7 @@ const UploadSection = ({ signer, onUploadSuccess, onVerifySuccess, globalHistory
       setStatus({ type: 'info', message: `File secured on IPFS (${ipfsHash}). Please sign the transaction...` });
 
       const contract = getContract(signer);
-      const tx = await contract.addDataset(ipfsHash);
+      const tx = await contract.addDataset(ipfsHash, finalName);
 
       setStatus({ type: 'info', message: `Transaction broadcasted (Tx: ${tx.hash.substring(0, 10)}...). Awaiting block confirmation.` });
 
@@ -132,6 +136,7 @@ const UploadSection = ({ signer, onUploadSuccess, onVerifySuccess, globalHistory
       });
 
       setSelectedFile(null);
+      setDatasetName('');
       if (fileInputRef.current) fileInputRef.current.value = null;
     } catch (error) {
       console.error(error);
@@ -147,8 +152,22 @@ const UploadSection = ({ signer, onUploadSuccess, onVerifySuccess, globalHistory
 
   return (
     <div className="glass-panel p-6 md:p-8">
-      <h2 className="text-xl font-semibold mb-6">Secure a New Dataset</h2>
       
+      <div className="flex bg-black/40 p-1 rounded-xl mb-6">
+        <button
+          onClick={() => setMode('verify')}
+          className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${mode === 'verify' ? 'bg-white/10 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'}`}
+        >
+          Verify Existing File
+        </button>
+        <button
+          onClick={() => setMode('upload')}
+          className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${mode === 'upload' ? 'bg-white/10 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'}`}
+        >
+          Upload & Hash (New Track)
+        </button>
+      </div>
+
       <div 
         className={`border-2 border-dashed rounded-xl p-8 md:p-12 text-center cursor-pointer transition-all duration-200 mb-6 flex flex-col items-center justify-center ${
           isDragOver || selectedFile ? 'border-blue-500 bg-blue-500/5' : 'border-white/10 hover:border-blue-500 hover:bg-blue-500/5 bg-white/5'
@@ -180,21 +199,37 @@ const UploadSection = ({ signer, onUploadSuccess, onVerifySuccess, globalHistory
         )}
       </div>
 
-      <div className="flex flex-col md:flex-row gap-4 w-full">
-        <button 
-          className={`btn btn-primary flex-1 ${isUploading ? 'animate-pulse' : ''}`} 
-          onClick={handleSubmit} 
-          disabled={!selectedFile || isUploading}
-        >
-          {isUploading ? 'Processing...' : 'Upload & Hash'}
-        </button>
-        <button 
-          className="btn btn-outline flex-1" 
-          onClick={handleVerify} 
-          disabled={!selectedFile || isUploading}
-        >
-          Verify Existing File
-        </button>
+      {mode === 'upload' && (
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-slate-300 mb-2">Dataset Name (Optional but Recommended)</label>
+          <input 
+            type="text" 
+            value={datasetName}
+            onChange={(e) => setDatasetName(e.target.value)}
+            placeholder="Ex: Dataset Name v0"
+            className="w-full bg-black/20 border border-white/10 rounded-lg p-3 text-slate-50 placeholder-slate-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all font-mono text-sm"
+          />
+        </div>
+      )}
+
+      <div className="flex w-full mt-2">
+        {mode === 'upload' ? (
+          <button 
+            className={`btn btn-primary w-full ${isUploading ? 'animate-pulse' : ''}`} 
+            onClick={handleSubmit} 
+            disabled={!selectedFile || isUploading}
+          >
+            {isUploading ? 'Processing...' : 'Secure & Hash Dataset'}
+          </button>
+        ) : (
+          <button 
+            className={`btn btn-outline w-full ${isUploading ? 'animate-pulse' : ''}`} 
+            onClick={handleVerify} 
+            disabled={!selectedFile || isUploading}
+          >
+             {isUploading ? 'Scanning Chain...' : 'Verify Existing File'}
+          </button>
+        )}
       </div>
 
       {status.message && (

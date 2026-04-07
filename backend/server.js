@@ -60,8 +60,13 @@ app.post('/api/upload', upload.single('dataset'), async (req, res, next) => {
             contentType: req.file.mimetype,
         });
 
+        // Check if datasetName exists in body or fallback to original file name
+        const displayName = req.body.datasetName && req.body.datasetName.trim() !== '' 
+            ? req.body.datasetName 
+            : req.file.originalname;
+
         const metadata = JSON.stringify({
-            name: req.file.originalname,
+            name: displayName,
         });
         data.append('pinataMetadata', metadata);
 

@@ -22,8 +22,11 @@ const HistorySection = ({ history, highlightedId }) => {
             className={`p-4 md:p-6 rounded-lg flex flex-col gap-2 transition-all duration-700 ${highlightedId === item.id ? 'bg-emerald-500/20 border-2 border-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.5)]' : 'bg-black/20 border border-white/10'}`}
           >
             <div className="flex flex-col gap-1">
-              <span className="text-slate-400 text-sm">Dataset ID #{item.id}</span>
-              <span className="font-mono text-sm md:text-base text-blue-400 break-all">
+              <div className="flex items-center gap-2">
+                <span className="font-bold text-lg text-slate-50">{item.fileName}</span>
+                <span className="text-slate-500 text-xs px-2 py-0.5 rounded-full border border-slate-700">ID #{item.id}</span>
+              </div>
+              <span className="font-mono text-sm md:text-base text-blue-400 break-all mt-1">
                 {item.ipfsHash}
               </span>
             </div>
